@@ -1,5 +1,6 @@
 import asyncio
 import socket
+from data import projects, languages, librariesAndFrameworks, tools
 
 PORT = 6379
 HOST = "127.0.0.1"
@@ -114,11 +115,14 @@ async def send_message(client, message, success=True):
 
 
 def handle_command(data):
-    if len(data) < 0:
+    if not data or len(data) == 0:
         return "No Command", False
     command = data[0]
+    args = data[1:] if len(data) > 1 else []
     response = ""
-    match command:
+    success = True
+
+    match command.upper():
         case "ABOUT":
             response = """
 ███╗   ███╗ █████╗ ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  █████╗ ███╗   ██╗██████╗ ██╗  ██╗██╗
@@ -126,9 +130,43 @@ def handle_command(data):
 ██╔████╔██║███████║██╔██╗ ██║███████║██╔██╗ ██║██║  ███╗███████║██╔██╗ ██║██║  ██║███████║██║
 ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██╔══██║██║╚██╗██║██║  ██║██╔══██║██║
 ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝██║  ██║██║ ╚████║██████╔╝██║  ██║██║
-╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝                                                                                                        
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝                                                                                                        
 I am Manan Gandhi, an 18 y/o engineering student, who loves to code and build software tools."""
-    return response.strip(), True
+        case "PROJECTS":
+            if args:
+                try:
+                    project_index = int(args[0]) - 1
+                    if 0 <= project_index < len(projects):
+                        found_project = projects[project_index]
+                        response = f"""
+{found_project["projectName"]}
+Description: {found_project["projectDescription"]}
+Tech Stack: {', '.join(found_project["projectTechnologies"])}
+URL: {found_project["projectLink"]}
+"""
+                    else:
+                        response = "Project not found."
+                except ValueError:
+                    response = "Invalid project index."
+            else:
+                response = "These are the projects developed by me:\n"
+                for index, project in enumerate(projects):
+                    response += f"({index+1}) {project['projectName']} - {project['projectLink']}\n"
+                response += (
+                    "Use PROJECTS <number> to get more details about each project.\n"
+                )
+        case "SKILLS":
+            response = "Languages:\n"
+            for skill in languages:
+                response += f"• {skill}\n"
+            response += "\nLibraries & Frameworks:\n"
+            for skill in librariesAndFrameworks:
+                response += f"• {skill}\n"
+            response += "\nTools:\n"
+            for skill in tools:
+                response += f"• {skill}\n"
+
+    return response.strip(), success
 
 
 if __name__ == "__main__":
