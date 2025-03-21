@@ -1,13 +1,22 @@
 import asyncio
 import socket
 from datetime import datetime
+from google.genai.client import Client
+from google.genai.types import Content, Part
+import os
+import dotenv
 from data import projects, languages, librariesAndFrameworks, tools
 
-PORT = 6379
+PORT = 1810
 HOST = "127.0.0.1"
 
 clients = set()
+chat_histories = {}
 start_time = datetime.now()
+
+dotenv.load_dotenv()
+gemini_client = Client(api_key=os.environ["GEMINI_API_KEY"])
+
 
 COMMANDS = {
     "ABOUT": "Display information about Manan Gandhi",
@@ -22,6 +31,9 @@ COMMANDS = {
 
 async def handle_client(client, addr):
     clients.add(client)
+    chat_histories[client] = gemini_client.aio.chats.create(
+        model="gemini-2.0-flash-lite"
+    )
 
     try:
         await send_message(
@@ -43,9 +55,6 @@ async def handle_client(client, addr):
             command_str = data.decode("utf-8").strip()
             command_parts = command_str.split()
 
-            command = command_parts[0] if command_parts else ""
-            args = command_parts[1:] if len(command_parts) > 1 else []
-
             response = handle_command(command_parts, client)
             if response is not None:
                 await send_message(client, response)
@@ -53,24 +62,24 @@ async def handle_client(client, addr):
         print(f"Error handling client: {e}")
     finally:
         clients.remove(client)
+        del chat_histories[client]
         client.close()
 
 
 async def send_message(client, message, is_end=True):
-    if not message:
-        return
-
     message = f"{message}"
     if is_end:
         message += "\n\n > "
     await asyncio.get_event_loop().sock_sendall(client, message.encode("utf-8"))
 
 
-async def send_streaming_message(client, message, delay=0.1):
-    words = message.split()
-    for index, word in enumerate(words):
-        await send_message(client, word + " ", is_end=index == len(words) - 1)
-        await asyncio.sleep(delay)
+async def handle_chat(client, prompt):
+    chat = chat_histories[client]
+    async for chunk in await chat.send_message_stream(prompt):
+        if not chunk.text:
+            continue
+        await send_message(client, chunk.text, is_end=False)
+    await send_message(client, "")
 
 
 def handle_command(data, client=None):
@@ -82,13 +91,7 @@ def handle_command(data, client=None):
 
     match command.upper():
         case "HELLO":
-            response = {
-                "server": "netcat-portfolio",
-                "version": "1.0.0",
-                "id": id(client) if client else 0,
-                "mode": "standalone",
-            }
-            return "\n".join([f"{k}: {v}" for k, v in response.items()])
+            return "Hello! I am Manan Gandhi."
 
         case "INFO":
             uptime = datetime.now() - start_time
@@ -148,9 +151,9 @@ Host: {HOST}"""
 
         case "CHAT":
             if client:
-                asyncio.create_task(
-                    send_streaming_message(client, "Hello! I am Manan Gandhi's Chatbot")
-                )
+                if not args:
+                    return "Please send a prompt to chat.\nExample - CHAT Who is Manan Gandhi?"
+                asyncio.create_task(handle_chat(client, " ".join(args)))
                 return None
             else:
                 return "Connection error"
