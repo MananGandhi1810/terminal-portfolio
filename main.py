@@ -2,10 +2,9 @@ import asyncio
 import socket
 from datetime import datetime
 from google.genai.client import Client
-from google.genai.types import Content, Part
 import os
 import dotenv
-from data import projects, languages, librariesAndFrameworks, tools
+from data import projects, languages, librariesAndFrameworks, tools, banner_text
 
 PORT = 1810
 HOST = "127.0.0.1"
@@ -19,14 +18,37 @@ gemini_client = Client(api_key=os.environ["GEMINI_API_KEY"])
 
 
 COMMANDS = {
-    "ABOUT": "Display information about Manan Gandhi",
+    "ABOUT": "Information about Manan Gandhi",
     "CHAT": "Start a conversation with the chatbot",
     "COMMAND": "List all available commands",
+    "HELP": "Get detailed help about commands. Usage: HELP [command]",
     "HELLO": "Get server information and protocol details",
     "INFO": "Display server information",
     "PROJECTS": "List projects or get details about a specific project",
     "SKILLS": "Display skills categorized by languages, libraries, frameworks, and tools",
 }
+
+
+system_prompt = f"""
+You are Manan Gandhi's Chatbot, running in a netcat shell
+Manan Gandhi is an 18 Year Old Computer Engineering student at SVKM's NMIMS MPSTME.
+Manan's Skills: {librariesAndFrameworks, languages, tools}
+Manan's Projects: {projects}
+
+Manan's birthdate is 18th October 2006, therefore the port 1810 on the netcat version is used.
+
+Commands available for the user are:
+{COMMANDS}
+
+Do not have a very off-topic conversation with the user, refuse to answer those queries.
+
+Links:
+Website - https://manangandhi.tech
+GitHub - https://github.com/MananGandhi1810
+Linkedin - https://www.linkedin.com/in/manangandhi1810
+Instagram - https://instagram.com/manan.py
+Twitter/X - https://x.com/MananGandhi1810
+"""
 
 
 async def handle_client(client, addr):
@@ -38,14 +60,7 @@ async def handle_client(client, addr):
     try:
         await send_message(
             client,
-            """
-███╗   ███╗ █████╗ ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  █████╗ ███╗   ██╗██████╗ ██╗  ██╗██╗
-████╗ ████║██╔══██╗████╗  ██║██╔══██╗████╗  ██║██╔════╝ ██╔══██╗████╗  ██║██╔══██╗██║  ██║██║
-██╔████╔██║███████║██╔██╗ ██║███████║██╔██╗ ██║██║  ███╗███████║██╔██╗ ██║██║  ██║███████║██║
-██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██╔══██║██║╚██╗██║██║  ██║██╔══██║██║
-██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝██║  ██║██║ ╚████║██████╔╝██║  ██║██║
-╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝
-""",
+            banner_text,
         )
         while True:
             data = await asyncio.get_event_loop().sock_recv(client, 1024)
@@ -67,9 +82,11 @@ async def handle_client(client, addr):
 
 
 async def send_message(client, message, is_end=True):
-    message = f"{message}"
+    if message is None:
+        await asyncio.get_event_loop().sock_sendall(client, "\n>".encode("utf-8"))
+        return
     if is_end:
-        message += "\n\n > "
+        message += "\n\n> "
     await asyncio.get_event_loop().sock_sendall(client, message.encode("utf-8"))
 
 
@@ -84,7 +101,7 @@ async def handle_chat(client, prompt):
 
 def handle_command(data, client=None):
     if not data or len(data) == 0:
-        return "No Command"
+        return None
 
     command = data[0]
     args = data[1:] if len(data) > 1 else []
@@ -157,6 +174,32 @@ Host: {HOST}"""
                 return None
             else:
                 return "Connection error"
+
+        case "HELP":
+            if args:
+                cmd = args[0].upper()
+                if cmd in COMMANDS:
+                    help_texts = {
+                        "ABOUT": "Usage: ABOUT\nDisplays information about Manan Gandhi and his background.",
+                        "CHAT": "Usage: CHAT <message>\nStart a conversation with the AI chatbot. Example: CHAT Tell me about Manan's skills",
+                        "COMMAND": "Usage: COMMAND\nShows a list of all available commands with brief descriptions.",
+                        "HELLO": "Usage: HELLO\nDisplays a greeting message and basic server information.",
+                        "INFO": "Usage: INFO\nShows detailed server information including uptime and connected clients.",
+                        "PROJECTS": "Usage: PROJECTS [number]\nList all projects or get details about a specific project by providing its number.",
+                        "SKILLS": "Usage: SKILLS\nDisplays a comprehensive list of technical skills categorized by type.",
+                        "HELP": "Usage: HELP [command]\nGet detailed help about commands. If no command is specified, shows general help.",
+                    }
+                    return help_texts[cmd]
+                return (
+                    f"Command '{cmd}' not found. Use COMMAND to see available commands."
+                )
+            response = "Available commands:\n\n"
+            for cmd, desc in COMMANDS.items():
+                response += f"{cmd}: {desc}\n"
+            response += (
+                "\nFor detailed help about a specific command, type: HELP <command>"
+            )
+            return response
 
         case _:
             return "Invalid command"
