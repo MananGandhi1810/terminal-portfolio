@@ -2,9 +2,10 @@ import asyncio
 import socket
 from datetime import datetime
 from google.genai.client import Client
+from google.genai import types
 import os
 import dotenv
-from data import projects, languages, librariesAndFrameworks, tools, banner_text
+from data import projects, languages, librariesAndFrameworks, tools, banner_text, commands
 
 PORT = 1810
 HOST = "127.0.0.1"
@@ -16,29 +17,17 @@ start_time = datetime.now()
 dotenv.load_dotenv()
 gemini_client = Client(api_key=os.environ["GEMINI_API_KEY"])
 
-
-COMMANDS = {
-    "ABOUT": "Information about Manan Gandhi",
-    "CHAT": "Start a conversation with the chatbot",
-    "COMMAND": "List all available commands",
-    "HELP": "Get detailed help about commands. Usage: HELP [command]",
-    "HELLO": "Get server information and protocol details",
-    "INFO": "Display server information",
-    "PROJECTS": "List projects or get details about a specific project",
-    "SKILLS": "Display skills categorized by languages, libraries, frameworks, and tools",
-}
-
-
 system_prompt = f"""
 You are Manan Gandhi's Chatbot, running in a netcat shell
 Manan Gandhi is an 18 Year Old Computer Engineering student at SVKM's NMIMS MPSTME.
+Manan has been to 16 hackathons, and won 3 hackathons.
 Manan's Skills: {librariesAndFrameworks, languages, tools}
 Manan's Projects: {projects}
 
 Manan's birthdate is 18th October 2006, therefore the port 1810 on the netcat version is used.
 
 Commands available for the user are:
-{COMMANDS}
+{commands}
 
 Do not have a very off-topic conversation with the user, refuse to answer those queries.
 
@@ -54,7 +43,10 @@ Twitter/X - https://x.com/MananGandhi1810
 async def handle_client(client, addr):
     clients.add(client)
     chat_histories[client] = gemini_client.aio.chats.create(
-        model="gemini-2.0-flash-lite"
+        model="gemini-2.0-flash-lite",
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+        ),
     )
 
     try:
@@ -122,7 +114,7 @@ Host: {HOST}"""
 
         case "COMMAND":
             response = "# Available Commands\n\n"
-            for cmd, desc in COMMANDS.items():
+            for cmd, desc in commands.items():
                 response += f"## {cmd}\n{desc}\n\n"
             return response.strip()
 
@@ -135,8 +127,7 @@ Host: {HOST}"""
                     project_index = int(args[0]) - 1
                     if 0 <= project_index < len(projects):
                         found_project = projects[project_index]
-                        return f"""
-{found_project["projectName"]}
+                        return f"""{found_project["projectName"]}
 {found_project["projectDescription"]}
 • Tech Stack: {', '.join(found_project["projectTechnologies"])}
 • URL: {found_project["projectLink"]}
@@ -178,7 +169,7 @@ Host: {HOST}"""
         case "HELP":
             if args:
                 cmd = args[0].upper()
-                if cmd in COMMANDS:
+                if cmd in commands:
                     help_texts = {
                         "ABOUT": "Usage: ABOUT\nDisplays information about Manan Gandhi and his background.",
                         "CHAT": "Usage: CHAT <message>\nStart a conversation with the AI chatbot. Example: CHAT Tell me about Manan's skills",
@@ -194,7 +185,7 @@ Host: {HOST}"""
                     f"Command '{cmd}' not found. Use COMMAND to see available commands."
                 )
             response = "Available commands:\n\n"
-            for cmd, desc in COMMANDS.items():
+            for cmd, desc in commands.items():
                 response += f"{cmd}: {desc}\n"
             response += (
                 "\nFor detailed help about a specific command, type: HELP <command>"

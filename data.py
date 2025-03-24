@@ -270,3 +270,14 @@ banner_text = """███╗   ███╗ █████╗ ███╗   �
 ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██╔══██║██║╚██╗██║██║  ██║██╔══██║██║
 ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝██║  ██║██║ ╚████║██████╔╝██║  ██║██║
 ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝"""
+
+commands = {
+    "ABOUT": "Information about Manan Gandhi",
+    "CHAT": "Start a conversation with the chatbot",
+    "COMMAND": "List all available commands",
+    "HELP": "Get detailed help about commands. Usage: HELP [command]",
+    "HELLO": "Get server information and protocol details",
+    "INFO": "Display server information",
+    "PROJECTS": "List projects or get details about a specific project",
+    "SKILLS": "Display skills categorized by languages, libraries, frameworks, and tools",
+}
