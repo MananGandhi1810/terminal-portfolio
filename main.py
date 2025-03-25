@@ -118,7 +118,7 @@ Host: {HOST}"""
                 response += f"## {cmd}\n{desc}\n\n"
             return response.strip()
 
-        case "ABOUT":
+        case "WHOAMI":
             return "I am Manan Gandhi, an 18 y/o engineering student, who loves to code and build software tools."
 
         case "PROJECTS":
@@ -171,7 +171,7 @@ Host: {HOST}"""
                 cmd = args[0].upper()
                 if cmd in commands:
                     help_texts = {
-                        "ABOUT": "Usage: ABOUT\nDisplays information about Manan Gandhi and his background.",
+                        "WHOAMI": "Usage: WHOAMI\nDisplays information about Manan Gandhi and his background.",
                         "CHAT": "Usage: CHAT <message>\nStart a conversation with the AI chatbot. Example: CHAT Tell me about Manan's skills",
                         "COMMAND": "Usage: COMMAND\nShows a list of all available commands with brief descriptions.",
                         "HELLO": "Usage: HELLO\nDisplays a greeting message and basic server information.",

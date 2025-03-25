@@ -272,7 +272,7 @@ banner_text = """███╗   ███╗ █████╗ ███╗   �
 ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝"""
 
 commands = {
-    "ABOUT": "Information about Manan Gandhi",
+    "WHOAMI": "Information about Manan Gandhi",
     "CHAT": "Start a conversation with the chatbot",
     "COMMAND": "List all available commands",
     "HELP": "Get detailed help about commands. Usage: HELP [command]",
