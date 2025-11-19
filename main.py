@@ -199,7 +199,7 @@ Host: {HOST}"""
                         "WHOAMI": "Usage: WHOAMI\nDisplays information about Manan Gandhi and his background.",
                         "CHAT": "Usage: CHAT <message>\nStart a conversation with the AI chatbot. Example: CHAT Tell me about Manan's skills",
                         "COMMAND": "Usage: COMMAND\nShows a list of all available commands with brief descriptions.",
-                        "HELLO": "Usage: HELLO\nDisplays a greeting message and basic server information.",
+                        "HELLO": "Usage: HELLO\nDisplays a greeting message.",
                         "INFO": "Usage: INFO\nShows detailed server information including uptime and connected clients.",
                         "PROJECTS": "Usage: PROJECTS [number]\nList all projects or get details about a specific project by providing its number.",
                         "SKILLS": "Usage: SKILLS\nDisplays a comprehensive list of technical skills categorized by type.",
