@@ -8,7 +8,7 @@ import dotenv
 from data import projects, languages, librariesAndFrameworks, tools, banner_text, commands
 
 PORT = 1810
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 
 clients = set()
 chat_histories = {}
@@ -19,12 +19,12 @@ gemini_client = Client(api_key=os.environ["GEMINI_API_KEY"])
 
 system_prompt = f"""
 You are Manan Gandhi's Chatbot, running in a netcat shell
-Manan Gandhi is an 18 Year Old Computer Engineering student at SVKM's NMIMS MPSTME.
-Manan has been to 16 hackathons, and won 3 hackathons.
+Manan Gandhi is an 19 Year Old Computer Engineering student at SVKM's NMIMS MPSTME.
+Manan has been to 20 hackathons, and won 5 hackathons.
 Manan's Skills: {librariesAndFrameworks, languages, tools}
 Manan's Projects: {projects}
 
-Manan's birthdate is 18th October 2006, therefore the port 1810 on the netcat version is used.
+Manan's birthdate is 18th October 2006, hence the port 1810 is used on the netcat version.
 
 Commands available for the user are:
 {commands}
@@ -43,7 +43,7 @@ Twitter/X - https://x.com/MananGandhi1810
 async def handle_client(client, addr):
     clients.add(client)
     chat_histories[client] = gemini_client.aio.chats.create(
-        model="gemini-2.0-flash-lite",
+        model="gemini-2.5-flash-lite",
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
         ),
@@ -61,6 +61,10 @@ async def handle_client(client, addr):
 
             command_str = data.decode("utf-8").strip()
             command_parts = command_str.split()
+
+            if command_parts[0].upper() == "EXIT":
+                await send_message(client, "Goodbye, hope to see you again!\n", is_end=False)
+                break
 
             response = handle_command(command_parts, client)
             if response is not None:
@@ -127,11 +131,15 @@ Host: {HOST}"""
                     project_index = int(args[0]) - 1
                     if 0 <= project_index < len(projects):
                         found_project = projects[project_index]
-                        return f"""{found_project["projectName"]}
+                        response = f"""{found_project["projectName"]}
 {found_project["projectDescription"]}
 • Tech Stack: {', '.join(found_project["projectTechnologies"])}
-• URL: {found_project["projectLink"]}
 """
+                        if found_project.get("link"):
+                            response += f"• Live: {found_project['link']}\n"
+                        if found_project.get("repo"):
+                            response += f"• Repo: {found_project['repo']}\n"
+                        return response
                     else:
                         return "Project not found."
                 except ValueError:
@@ -139,7 +147,13 @@ Host: {HOST}"""
             else:
                 response = "These are the projects developed by me:\n"
                 for index, project in enumerate(projects):
-                    response += f"({index+1}) {project['projectName']} - {project['projectLink']}\n"
+                    if project.get('link') and project.get('repo'):
+                        link = f"Live: {project['link']}, Repo: {project['repo']}"
+                    elif project.get('link') or project.get('repo'):
+                        link = project.get('link') or project.get('repo')
+                    else:
+                        link = 'N/A'
+                    response += f"({index+1}) {project['projectName']} - {link}\n"
                 response += (
                     "Use PROJECTS <number> to get more details about each project.\n"
                 )
@@ -182,7 +196,8 @@ Host: {HOST}"""
                     }
                     return help_texts[cmd]
                 return (
-                    f"Command '{cmd}' not found. Use COMMAND to see available commands."
+                    f"Command '{
+                        cmd}' not found. Use COMMAND to see available commands."
                 )
             response = "Available commands:\n\n"
             for cmd, desc in commands.items():
@@ -191,6 +206,9 @@ Host: {HOST}"""
                 "\nFor detailed help about a specific command, type: HELP <command>"
             )
             return response
+
+        case "RESUME":
+            return "You can view and download my resume here: https://manangandhi.tech/Manan_Gandhi_Resume.pdf"
 
         case _:
             return "Invalid command"
