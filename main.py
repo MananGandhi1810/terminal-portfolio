@@ -216,7 +216,8 @@ Host: {HOST}"""
             return "You can view and download my resume here: https://manangandhi.tech/Manan_Gandhi_Resume.pdf"
 
         case _:
-            close_matches = difflib.get_close_matches(command.upper(), commands.keys(), n=3, cutoff=0.6)
+            close_matches = difflib.get_close_matches(
+                command.upper(), commands.keys(), n=3, cutoff=0.6)
             if close_matches:
                 return f"Command '{command}' not found. Did you mean: {', '.join(close_matches)}?"
             else:
