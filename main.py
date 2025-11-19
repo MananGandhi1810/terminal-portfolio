@@ -5,6 +5,7 @@ from google.genai.client import Client
 from google.genai import types
 import os
 import dotenv
+import difflib
 from data import projects, languages, librariesAndFrameworks, tools, banner_text, commands
 
 PORT = 1810
@@ -61,6 +62,10 @@ async def handle_client(client, addr):
 
             command_str = data.decode("utf-8").strip()
             command_parts = command_str.split()
+
+            if len(command_parts) == 0:
+                await send_message(client, None)
+                continue
 
             if command_parts[0].upper() == "EXIT":
                 await send_message(client, "Goodbye, hope to see you again!\n", is_end=False)
@@ -192,6 +197,7 @@ Host: {HOST}"""
                         "INFO": "Usage: INFO\nShows detailed server information including uptime and connected clients.",
                         "PROJECTS": "Usage: PROJECTS [number]\nList all projects or get details about a specific project by providing its number.",
                         "SKILLS": "Usage: SKILLS\nDisplays a comprehensive list of technical skills categorized by type.",
+                        "RESUME": "Usage: RESUME\nProvides a link to view and download Manan Gandhi's resume.",
                         "HELP": "Usage: HELP [command]\nGet detailed help about commands. If no command is specified, shows general help.",
                     }
                     return help_texts[cmd]
@@ -210,7 +216,13 @@ Host: {HOST}"""
             return "You can view and download my resume here: https://manangandhi.tech/Manan_Gandhi_Resume.pdf"
 
         case _:
-            return "Invalid command"
+            close_matches = difflib.get_close_matches(command.upper(), commands.keys(), n=3, cutoff=0.6)
+            if close_matches:
+                return f"Command '{command}' not found. Did you mean: {', '.join(close_matches)}?"
+            else:
+                help_menu = handle_command(["HELP"])
+                response = "Invalid command.\n\n" + help_menu
+                return response
 
 
 async def start_server():
