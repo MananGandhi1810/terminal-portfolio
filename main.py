@@ -196,8 +196,7 @@ Host: {HOST}"""
                     }
                     return help_texts[cmd]
                 return (
-                    f"Command '{
-                        cmd}' not found. Use COMMAND to see available commands."
+                    f"Command '{cmd}' not found. Use COMMAND to see available commands."
                 )
             response = "Available commands:\n\n"
             for cmd, desc in commands.items():

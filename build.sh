@@ -1,0 +1,1 @@
+docker build . -t ghcr.io/manangandhi1810/terminal-portfolio:latest

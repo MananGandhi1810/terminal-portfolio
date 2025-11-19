@@ -1,0 +1,21 @@
+# Ignore Python cache and environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local env and virtual envs
+.env
+venv/
+env/
+
+# Packaging
+build/
+dist/
+*.egg-info
+
+# VCS
+.git
+
+# OS files
+.DS_Store

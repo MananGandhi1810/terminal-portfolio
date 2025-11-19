@@ -1,0 +1,1 @@
+docker run --env-file ./.env -p 1810:1810 ghcr.io/manangandhi1810/terminal-portfolio:latest
