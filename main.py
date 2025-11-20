@@ -37,6 +37,7 @@ Commands available for the user are:
 {commands}
 
 Do not have a very off-topic conversation with the user, refuse to answer those queries.
+Do not use markdown formatting in your responses.
 Do not use emojis in your responses.
 
 Links:
