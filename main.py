@@ -59,7 +59,7 @@ async def handle_client(client, addr):
     try:
         await send_message(
             client,
-            banner_text,
+            banner_text+"\n\n"+handle_command(["HELP"]),
         )
         while True:
             data = await asyncio.get_event_loop().sock_recv(client, 1024)
