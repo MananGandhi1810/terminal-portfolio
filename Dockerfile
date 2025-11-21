@@ -6,7 +6,8 @@ WORKDIR /app
 # Keep Python output unbuffered (useful for logs)
 ENV PYTHONUNBUFFERED=1
 
-# Copy and install dependencies first for better caching
+# Copy and install dependencies first for better caching    
+
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
