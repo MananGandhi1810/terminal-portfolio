@@ -19,7 +19,7 @@ projects = [
         "projectName": "MPSTME OnTrack",
         "projectDescription": "MPSTME OnTrack helps students store their schedule and class details. Currently has 1500+ downloads on Play Store and App Store combined.",
         "projectTechnologies": ["Flutter", "Google Play Store", "Apple App Store"],
-        "link": "https://ontrack.mpstme.tech/",
+        "link": "https://ontrack.mpstme.dev/",
         "repo": "",
     },
     {
