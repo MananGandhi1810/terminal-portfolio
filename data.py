@@ -87,6 +87,20 @@ projects = [
         "repo": "https://github.com/MananGandhi1810/Adeon",
     },
     {
+        "projectName": "MPSTME.pics",
+        "projectDescription": "A platform for MPSTME students to share and explore event photos.",
+        "projectTechnologies": [
+            "Next.js",
+            "Express.js",
+            "PostgreSQL",
+            "AWS S3",
+            "Docker",
+            "Drizzle ORM",
+        ],
+        "link": "https://mpstme.pics/",
+        "repo": "https://github.com/KartikJain14/mpstme.pics",
+    },
+    {
         "projectName": "Automated Interview Platform",
         "projectDescription": "Interview simulation platform that provides feedback and scoring to help users improve. Built for Smart India Hackathon 2024.",
         "projectTechnologies": [
