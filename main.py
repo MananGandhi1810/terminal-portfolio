@@ -39,7 +39,7 @@ Available commands (use exactly as listed):
 {', '.join(commands.keys())}
 
 Links:
-Website - https://manangandhi.tech
+Website - https://manan.cloud
 GitHub - https://github.com/MananGandhi1810
 LinkedIn - https://www.linkedin.com/in/manangandhi1810
 Instagram - https://instagram.com/manan.py
@@ -219,7 +219,7 @@ Host: {HOST}"""
             return response
 
         case "RESUME":
-            return "You can view and download my resume here: https://manangandhi.tech/resume"
+            return "You can view and download my resume here: https://manan.cloud/resume"
 
         case _:
             close_matches = difflib.get_close_matches(
