@@ -219,7 +219,7 @@ Host: {HOST}"""
             return response
 
         case "RESUME":
-            return "You can view and download my resume here: https://manan.cloud/resume"
+            return "You can visit https://manan.cloud/resume or run the command 'curl https://www.manan.cloud/Manan_Gandhi_Resume.pdf > resume.pdf' to view and download my resume."
 
         case _:
             close_matches = difflib.get_close_matches(
