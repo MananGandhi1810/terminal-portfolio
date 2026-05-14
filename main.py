@@ -6,7 +6,7 @@ from google.genai import types
 import os
 import dotenv
 import difflib
-from data import projects, languages, librariesAndFrameworks, tools, banner_text, commands
+from data import projects, languages, librariesAndFrameworks, tools, banner_text, commands, experience
 
 PORT = 1810
 HOST = "0.0.0.0"
@@ -182,6 +182,19 @@ Host: {HOST}"""
                 response += f"• {skill}\n"
             return response
 
+        case "EXPERIENCE":
+            response = "My Work Experience:\n\n"
+            for idx, exp in enumerate(experience):
+                response += f"{exp['title']}\n"
+                response += f"  Company: {exp['company']}\n"
+                response += f"  Period: {exp['period']}\n"
+                if exp['description']:
+                    for line in exp['description'].split('\n'):
+                        response += f"  {line}\n"
+                if idx < len(experience) - 1:
+                    response += "\n"
+            return response
+
         case "CHAT":
             if client:
                 if not args:
@@ -203,6 +216,7 @@ Host: {HOST}"""
                         "INFO": "Usage: INFO\nShows detailed server information including uptime and connected clients.",
                         "PROJECTS": "Usage: PROJECTS [number]\nList all projects or get details about a specific project by providing its number.",
                         "SKILLS": "Usage: SKILLS\nDisplays a comprehensive list of technical skills categorized by type.",
+                        "EXPERIENCE": "Usage: EXPERIENCE\nDisplays all work experience and internships.",
                         "RESUME": "Usage: RESUME\nProvides a link to view and download Manan Gandhi's resume.",
                         "HELP": "Usage: HELP [command]\nGet detailed help about commands. If no command is specified, shows general help.",
                     }

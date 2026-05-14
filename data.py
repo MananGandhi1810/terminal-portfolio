@@ -332,6 +332,21 @@ tools = [
     "Adobe Photoshop",
 ]
 
+experience = [
+    {
+        "title": "Mid Frequency Trading Intern",
+        "company": "Ikiquant Technologies",
+        "period": "May 2026 — Present",
+        "description": "",
+    },
+    {
+        "title": "Software Development Intern",
+        "company": "Sykes & Rays Equities",
+        "period": "May 2025 — July 2025",
+        "description": """Built an automated trading system using Python, OpenAlgo, and Zerodha APIs to execute strategies and manage orders programmatically. Contributed to OpenAlgo, fixing a critical bug in the Zerodha Websockets Module. Developed automation scripts to streamline traders' day-to-day workflows and end-of-day data processing, reducing manual effort and improving data reliability.""",
+    },
+]
+
 banner_text = """███╗   ███╗ █████╗ ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗  █████╗ ███╗   ██╗██████╗ ██╗  ██╗██╗
 ████╗ ████║██╔══██╗████╗  ██║██╔══██╗████╗  ██║██╔════╝ ██╔══██╗████╗  ██║██╔══██╗██║  ██║██║
 ██╔████╔██║███████║██╔██╗ ██║███████║██╔██╗ ██║██║  ███╗███████║██╔██╗ ██║██║  ██║███████║██║
@@ -348,6 +363,7 @@ commands = {
     "INFO": "Display server information",
     "PROJECTS": "List projects or get details about a specific project",
     "SKILLS": "Display skills categorized by languages, libraries, frameworks, and tools",
+    "EXPERIENCE": "Display work experience and internships",
     "RESUME": "Get the link to Manan Gandhi's resume",
     "EXIT": "Exit the terminal session",
 }
